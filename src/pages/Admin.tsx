@@ -10,6 +10,7 @@ import AdminMeetings from "@/components/RTC/AdminMeetings";
 import AdminActivities from "@/components/RTC/AdminActivities";
 import AdminSuggestions from "@/components/RTC/AdminSuggestions";
 import AdminAdmins from "@/components/RTC/AdminAdmins";
+import AdminAudit from "@/components/RTC/AdminAudit";
 import { ShieldAlert } from "lucide-react";
 
 export default function AdminPage() {
@@ -38,6 +39,7 @@ export default function AdminPage() {
       case "activities-mgmt": return hasPermission("الفعاليات") ? <AdminActivities /> : <NoPerm label="الفعاليات" />;
       case "suggestions-mgmt": return hasPermission("الشكاوى") ? <AdminSuggestions /> : <NoPerm label="الشكاوى" />;
       case "admins": return hasPermission("الأدمنز") ? <AdminAdmins /> : <NoPerm label="الأدمنز - هيد الفرع فقط" />;
+      case "audit": return <AdminAudit />;
       default: return <AdminDashboard />;
     }
   };
@@ -46,7 +48,9 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[#F0F2F8]" dir="rtl">
       <AdminNavbar active={active} setActive={setActive} onLogout={() => logoutAdmin()} />
       <main className="max-w-7xl mx-auto px-4 py-6">{render()}</main>
-      <div className="text-center text-xs text-muted-foreground py-4">مسجل كـ {adminSession.name} • {adminSession.email} {adminSession.isHead && "• هيد الفرع 👑"}</div>
+      <div className="text-center text-xs text-muted-foreground py-4">
+        مسجل كـ {adminSession.name} • {adminSession.email} {adminSession.isHead && "• هيد الفرع 👑"} — هيد الفرع: {adminSession.isHead ? adminSession.name : "head@rtc.com"}
+      </div>
     </div>
   );
 }
@@ -56,7 +60,7 @@ function NoPerm({ label }: { label: string }) {
     <div className="bg-white rounded-[1.7rem] border p-10 text-center space-y-3">
       <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-600 grid place-items-center mx-auto"><ShieldAlert className="w-7 h-7" /></div>
       <div className="font-extrabold text-[#0F2A5C]">ليس لديك صلاحية: {label}</div>
-      <p className="text-sm text-muted-foreground">تواصل مع هيد الفرع ليمنحك هذه الصلاحية من صفحة الأدمنز.</p>
+      <p className="text-sm text-muted-foreground">تواصل مع هيد الفرع (head@rtc.com) ليمنحك هذه الصلاحية من صفحة الأدمنز.</p>
     </div>
   );
 }

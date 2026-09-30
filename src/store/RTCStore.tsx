@@ -31,7 +31,7 @@ export interface Meeting { id:string; title:string; date:string; time:string; le
 export interface Activity { id:string; title:string; date:string; time:string; location:string; description:string; image:string; registrations:{name:string; phone:string; age:string}[]; createdBy?:string }
 export interface Suggestion { id:string; user:string; phone:string; type:"شكوى"|"اقتراح"; text:string; reason:string; image?:string; date:string; reply?:string; status:"جديد"|"تم الرد"|"قيد المراجعة"; repliedBy?:string }
 export interface AppNotification { id:string; title:string; body:string; date:string; read:boolean; for:"admin"|"user" }
-export interface AdminUser { id:string; email:string; password:string; name:string; permissions:string[]; isHead?:boolean }
+export interface AdminUser { id:string; email:string; password:string; name:string; permissions:string[]; isHead?:boolean; avatar?:string }
 export interface BlockRecord { userId:string; reason:string; until:string; active:boolean; by?:string }
 export interface AuditLog { id:string; action:string; actor:string; actorEmail:string; detail:string; date:string; target:string }
 
