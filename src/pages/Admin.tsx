@@ -11,6 +11,7 @@ import AdminActivities from "@/components/RTC/AdminActivities";
 import AdminSuggestions from "@/components/RTC/AdminSuggestions";
 import AdminAdmins from "@/components/RTC/AdminAdmins";
 import AdminAudit from "@/components/RTC/AdminAudit";
+import MamMark from "@/components/RTC/MamMark";
 import { ShieldAlert } from "lucide-react";
 
 export default function AdminPage() {
@@ -25,6 +26,7 @@ export default function AdminPage() {
           <a href="/" className="text-sm text-muted-foreground hover:text-[#0F2A5C] underline">← العودة لموقع المستخدمين</a>
         </div>
         <AdminLogin onSuccess={() => setActive("dashboard")} />
+        <MamMark />
       </div>
     );
   }
@@ -47,10 +49,14 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-[#F0F2F8]" dir="rtl">
       <AdminNavbar active={active} setActive={setActive} onLogout={() => logoutAdmin()} />
-      <main className="max-w-7xl mx-auto px-4 py-6">{render()}</main>
-      <div className="text-center text-xs text-muted-foreground py-4">
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        {render()}
+        <MamMark />
+      </main>
+      <div className="text-center text-xs text-muted-foreground py-2">
         مسجل كـ {adminSession.name} • {adminSession.email} {adminSession.isHead && "• هيد الفرع 👑"} — هيد الفرع: {adminSession.isHead ? adminSession.name : "head@rtc.com"}
       </div>
+      <MamMark compact />
     </div>
   );
 }
