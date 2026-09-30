@@ -56,7 +56,8 @@ interface RTCState {
   admins: AdminUser[];
   blocks: BlockRecord[];
   volunteerQuestions: string[];
-  currentUser: {name:string; email:string; interests:Category[]; isAdmin?:boolean} | null;
+  currentUser: {name:string; email:string; interests:Category[] } | null;
+  adminSession: AdminUser | null;
   addRegistration:(r:Registration)=>void;
   addVolunteerRequest:(v:VolunteerRequest)=>void;
   updateVolunteerStatus:(id:string,status:VolunteerRequest["status"],reply?:string)=>void;
@@ -75,6 +76,9 @@ interface RTCState {
   toggleBlock:(b:BlockRecord)=>void;
   addCourse:(c:Course)=>void;
   exportCSV:(type:string)=>void;
+  loginAdmin:(email:string,password:string)=> AdminUser | null;
+  logoutAdmin:()=>void;
+  hasPermission:(perm:string)=>boolean;
 }
 
 const RTCContext = createContext<RTCState|null>(null);
@@ -104,6 +108,9 @@ export const RTCProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
   const [currentUser,setCurrentUser]=useState<RTCState["currentUser"]>(()=>{
     const s=localStorage.getItem("rtc_user"); return s?JSON.parse(s):null;
   });
+  const [adminSession,setAdminSession]=useState<AdminUser | null>(()=>{
+    const s=localStorage.getItem("rtc_admin_session"); return s?JSON.parse(s):null;
+  });
 
   useEffect(()=>localStorage.setItem("rtc_courses",JSON.stringify(courses)),[courses]);
   useEffect(()=>localStorage.setItem("rtc_regs",JSON.stringify(registrations)),[registrations]);
@@ -117,6 +124,7 @@ export const RTCProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
   useEffect(()=>localStorage.setItem("rtc_blocks",JSON.stringify(blocks)),[blocks]);
   useEffect(()=>localStorage.setItem("rtc_volQ",JSON.stringify(volunteerQuestions)),[volunteerQuestions]);
   useEffect(()=>{ if(currentUser) localStorage.setItem("rtc_user",JSON.stringify(currentUser)); else localStorage.removeItem("rtc_user");},[currentUser]);
+  useEffect(()=>{ if(adminSession) localStorage.setItem("rtc_admin_session",JSON.stringify(adminSession)); else localStorage.removeItem("rtc_admin_session");},[adminSession]);
 
   const addRegistration=(r:Registration)=>{
     setRegistrations(p=>[r,...p]);
@@ -138,7 +146,6 @@ export const RTCProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
   const toggleBlock=(b:BlockRecord)=>{ setBlocks(p=>{ const ex=p.find(x=>x.userId===b.userId); if(ex) return p.map(x=>x.userId===b.userId?b:x); return [...p,b];});};
   const addCourse=(c:Course)=>{
     setCourses(p=>[c,...p]);
-    // notify interested users
     setNotifications(n=>[{id:Date.now().toString(), title:"كورس جديد نزل!", body:`كورس ${c.title} في فئة ${c.category} متاح الآن`, date:new Date().toLocaleString("ar-EG"), read:false, for:"user"},...n]);
   };
   const exportCSV=(type:string)=>{
@@ -152,8 +159,20 @@ export const RTCProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
     const csv=[header,...rows.map(r=>Object.values(r).map(v=>`"${String(v).replace(/"/g,'""')}"`).join(","))].join("\n");
     const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url);
   };
+  const loginAdmin=(email:string,password:string)=>{
+    const found = admins.find(a=> a.email===email && a.password===password);
+    if(found){ setAdminSession(found); return found; }
+    return null;
+  };
+  const logoutAdmin=()=> setAdminSession(null);
+  const hasPermission=(perm:string)=>{
+    if(!adminSession) return false;
+    if(adminSession.isHead) return true;
+    if(adminSession.permissions.includes("كل الصلاحيات")) return true;
+    return adminSession.permissions.includes(perm);
+  };
 
-  return <RTCContext.Provider value={{courses, registrations, volunteerRequests, evaluations, meetings, activities, suggestions, notifications, admins, blocks, volunteerQuestions, currentUser, addRegistration, addVolunteerRequest, updateVolunteerStatus, addEvaluation, addMeeting, addActivity, registerActivity, addSuggestion, replySuggestion, addNotification, markRead, addAdmin, removeAdmin, setCurrentUser, setVolunteerQuestions, toggleBlock, addCourse, exportCSV}}>{children}</RTCContext.Provider>
+  return <RTCContext.Provider value={{courses, registrations, volunteerRequests, evaluations, meetings, activities, suggestions, notifications, admins, blocks, volunteerQuestions, currentUser, adminSession, addRegistration, addVolunteerRequest, updateVolunteerStatus, addEvaluation, addMeeting, addActivity, registerActivity, addSuggestion, replySuggestion, addNotification, markRead, addAdmin, removeAdmin, setCurrentUser, setVolunteerQuestions, toggleBlock, addCourse, exportCSV, loginAdmin, logoutAdmin, hasPermission}}>{children}</RTCContext.Provider>
 };
 
 export const useRTC=()=>{ const c=useContext(RTCContext); if(!c) throw new Error("RTCContext missing"); return c; };
