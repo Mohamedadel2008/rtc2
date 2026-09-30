@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, GraduationCap, Heart, Users, Award, Sparkles } from "lucide-react";
+import { ArrowLeft, GraduationCap, Heart, Users, Award, Sparkles, Download, Globe } from "lucide-react";
 
 export default function HomeSection({ setActive }: { setActive: (s: string) => void }) {
   return (
@@ -17,7 +17,7 @@ export default function HomeSection({ setActive }: { setActive: (s: string) => v
               علّم <span className="text-[#FFD600]">ينتفع</span> به
             </h1>
             <p className="text-white/80 leading-relaxed text-lg">
-              منصة RTC تجمع بين التدريب المجاني والتطوع الهادف. كورسات بشهادات، فعاليات خيرية، ومجتمع شبابي يصنع الأثر.
+              منصة RTC تجمع بين التدريب المجاني والتطوع الهادف. كورسات بشهادات، فعاليات خيرية، ومجتمع شبابي يصنع الأثر. نظام واحد لكل الفروع.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button onClick={() => setActive("courses")} className="rounded-full bg-[#FFD600] text-[#0F2A5C] hover:bg-[#FFD600]/90 font-extrabold px-8 h-12 text-base">
@@ -30,7 +30,7 @@ export default function HomeSection({ setActive }: { setActive: (s: string) => v
             <div className="flex gap-6 pt-2">
               <div className="text-center"><div className="text-2xl font-extrabold text-[#FFD600]">+500</div><div className="text-xs text-white/70">متطوع</div></div>
               <div className="text-center"><div className="text-2xl font-extrabold text-[#FFD600]">+120</div><div className="text-xs text-white/70">كورس سنوياً</div></div>
-              <div className="text-center"><div className="text-2xl font-extrabold text-[#FFD600]">8</div><div className="text-xs text-white/70">فروع</div></div>
+              <div className="text-center"><div className="text-2xl font-extrabold text-[#FFD600]">5</div><div className="text-xs text-white/70">فروع + أونلاين</div></div>
             </div>
           </div>
           <div className="relative">
@@ -46,9 +46,9 @@ export default function HomeSection({ setActive }: { setActive: (s: string) => v
       {/* Features */}
       <div className="grid md:grid-cols-3 gap-4">
         {[
-          { icon: GraduationCap, title: "كورسات متنوعة", desc: "لغات، كمبيوتر، إدارة، ميديا وتنمية بشرية مع مدربين محترفين" },
-          { icon: Users, title: "مجتمع تطوعي", desc: "انضم لفريق HR أو PR أو تنظيم أو ميديا واصنع أثر حقيقي" },
-          { icon: Award, title: "شهادات ومتابعة", desc: "تتبع حضورك، تقدمك، وشهاداتك من بروفايلك الشخصي" },
+          { icon: GraduationCap, title: "كورسات متنوعة", desc: "لغات، كمبيوتر، إدارة، ميديا وتنمية بشرية مع مدربين محترفين — فلترة حسب الفرع والفئة" },
+          { icon: Users, title: "مجتمع تطوعي", desc: "انضم لفريق HR أو PR أو تنظيم أو ميديا واصنع أثر حقيقي — مسار تطوع كامل برابط تفعيل آمن" },
+          { icon: Award, title: "شهادات ومتابعة", desc: "تتبع حضورك، تقدمك، وشهاداتك من بروفايلك الشخصي + إشعارات لحظية" },
         ].map(c => (
           <div key={c.title} className="bg-white rounded-3xl p-6 border shadow-sm hover:shadow-md transition">
             <div className="w-12 h-12 rounded-2xl bg-[#0F2A5C] text-[#FFD600] grid place-items-center mb-4"><c.icon className="w-6 h-6" /></div>
@@ -56,6 +56,35 @@ export default function HomeSection({ setActive }: { setActive: (s: string) => v
             <div className="text-sm text-muted-foreground mt-1 leading-relaxed">{c.desc}</div>
           </div>
         ))}
+      </div>
+
+      {/* APK + Hosting distribution */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="bg-[#0F2A5C] rounded-[1.7rem] p-6 text-white flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 font-extrabold text-lg"><Download className="w-6 h-6 text-[#FFD600]" /> حمّل تطبيق RTC</div>
+            <p className="text-white/70 text-sm mt-2 leading-relaxed">التطبيق غير منشور على Google Play. حمّل ملف APK مباشرة من موقع RTC وثبّته على هاتفك — كل تحديث بينزل كـ APK جديد.</p>
+            <ul className="text-xs text-white/60 mt-3 list-disc mr-5 space-y-1">
+              <li>يدعم العربية RTL بالكامل</li>
+              <li>إشعارات FCM للتسجيلات والردود</li>
+              <li>نفس بيانات الموقع — نظام موحد</li>
+            </ul>
+          </div>
+          <a href="#" onClick={(e)=>{e.preventDefault(); alert("سيتم رفع الـ APK عند النشر — حالياً جرّب نسخة الويب 🟡");}} className="mt-5 inline-flex items-center justify-center gap-2 bg-[#FFD600] text-[#0F2A5C] rounded-full py-3 font-extrabold hover:bg-[#FFD600]/90">تحميل APK للأندرويد <Download className="w-5 h-5" /></a>
+        </div>
+        <div className="bg-white rounded-[1.7rem] border p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 font-extrabold text-[#0F2A5C] text-lg"><Globe className="w-6 h-6" /> موقع الويب</div>
+            <p className="text-muted-foreground text-sm mt-2 leading-relaxed">الموقع مستضاف على Firebase Hosting (مجاني) — رابط واحد لكل الفروع. شغال على الموبايل والكمبيوتر بنفس المشروع Flutter.</p>
+            <div className="bg-muted rounded-xl p-3 mt-3 text-xs leading-relaxed">
+              <div className="font-bold text-[#0F2A5C]">حدود الخطة المجانية:</div>
+              <div>Firestore: 1GB / 50K قراءة / 20K كتابة يومياً</div>
+              <div>R2 للصور: 10GB مجاناً — حد 2MB للصورة</div>
+              <div className="text-amber-600 font-bold">عند اقتراب الحدود — نوقف رفع الصور مؤقتاً قبل أي تكلفة</div>
+            </div>
+          </div>
+          <div className="mt-4 text-xs text-muted-foreground text-center">rtc-training.web.app • متاح 24/7</div>
+        </div>
       </div>
 
       {/* CTA volunteer banner */}
