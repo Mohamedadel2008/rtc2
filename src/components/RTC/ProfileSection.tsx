@@ -1,15 +1,42 @@
 import { useState } from "react";
 import { useRTC } from "@/store/RTCStore";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Award, Calendar, Clock, BookOpen, Ban } from "lucide-react";
+import { Settings, Award, Calendar, Clock, BookOpen, Ban, Save, Camera } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ProfileSection() {
-  const { currentUser, registrations, blocks, evaluations } = useRTC();
+  const { currentUser, registrations, blocks, evaluations, categories, updateUserProfile } = useRTC();
   const [tab, setTab] = useState<"نشاطي" | "شهاداتي" | "حضوري">("نشاطي");
   const [showSettings, setShowSettings] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [form, setForm] = useState({ name: "", phone: "", interests: [] as string[], avatar: "" });
+
+  const openEdit = () => {
+    if (!currentUser) return;
+    setForm({ name: currentUser.name, phone: currentUser.phone || "", interests: currentUser.interests || [], avatar: currentUser.avatar || "" });
+    setEditMode(true);
+  };
+
+  const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]; if (!f) return;
+    const r = new FileReader(); r.onload = () => setForm(s => ({ ...s, avatar: r.result as string })); r.readAsDataURL(f);
+  };
+
+  const toggleInterest = (cat: string) => {
+    setForm(s => ({ ...s, interests: s.interests.includes(cat) ? s.interests.filter(x => x !== cat) : [...s.interests, cat] }));
+  };
+
+  const saveProfile = () => {
+    if (!form.name.trim()) return alert("الاسم مطلوب");
+    updateUserProfile({ name: form.name.trim(), phone: form.phone.trim(), interests: form.interests, avatar: form.avatar });
+    setEditMode(false);
+    alert("تم تحديث بروفايلك ✅ — البريد محمي ولا يمكن تغييره");
+  };
 
   if (!currentUser) {
     return (
@@ -29,16 +56,25 @@ export default function ProfileSection() {
     <div className="space-y-5">
       <div className="bg-[#0F2A5C] rounded-[2rem] p-8 text-white flex flex-col md:flex-row gap-6 items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-3xl bg-[#FFD600] text-[#0F2A5C] grid place-items-center text-2xl font-extrabold">{currentUser.name[0]}</div>
+          {currentUser.avatar ? (
+            <img src={currentUser.avatar} alt={currentUser.name} className="w-20 h-20 rounded-3xl object-cover border-2 border-[#FFD600]" />
+          ) : (
+            <div className="w-20 h-20 rounded-3xl bg-[#FFD600] text-[#0F2A5C] grid place-items-center text-2xl font-extrabold">{currentUser.name[0]}</div>
+          )}
           <div>
             <div className="text-2xl font-extrabold">{currentUser.name}</div>
-            <div className="text-white/70 text-sm">{currentUser.email}</div>
-            <div className="flex gap-2 mt-2">
+            <div className="text-white/70 text-sm flex items-center gap-2">{currentUser.email}<Badge className="bg-white/20 text-white text-[10px]">البريد محمي 🔒</Badge></div>
+            {currentUser.phone && <div className="text-white/70 text-xs">{currentUser.phone}</div>}
+            <div className="flex gap-2 mt-2 flex-wrap">
               {currentUser.interests.map(i => <Badge key={i} className="bg-white/15 text-white border-white/20">{i}</Badge>)}
+              {currentUser.interests.length === 0 && <span className="text-xs text-white/50">لم تحدد اهتمامات بعد</span>}
             </div>
           </div>
         </div>
-        <Button onClick={() => setShowSettings(true)} variant="outline" className="rounded-full bg-white text-[#0F2A5C] hover:bg-white/90 font-bold"><Settings className="w-4 h-4 ml-2" /> الإعدادات</Button>
+        <div className="flex gap-2">
+          <Button onClick={openEdit} className="rounded-full bg-[#FFD600] text-[#0F2A5C] hover:bg-[#FFD600]/90 font-bold"><Camera className="w-4 h-4 ml-2" /> تعديل البروفايل</Button>
+          <Button onClick={() => setShowSettings(true)} variant="outline" className="rounded-full bg-white text-[#0F2A5C] hover:bg-white/90 font-bold"><Settings className="w-4 h-4 ml-2" /> الإعدادات</Button>
+        </div>
       </div>
 
       {myBlock && (
@@ -110,18 +146,50 @@ export default function ProfileSection() {
         </div>
       )}
 
+      {/* Edit Profile */}
+      <Dialog open={editMode} onOpenChange={setEditMode}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle className="text-right">تعديل البروفايل</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="text-center">
+              {form.avatar ? <img src={form.avatar} alt="avatar" className="w-24 h-24 rounded-3xl object-cover mx-auto border-2 border-[#FFD600]" /> : <div className="w-24 h-24 rounded-3xl bg-[#0F2A5C] text-[#FFD600] grid place-items-center text-2xl font-extrabold mx-auto">{form.name[0] || "؟"}</div>}
+              <Label className="mt-3 inline-block bg-muted rounded-full px-4 py-2 cursor-pointer text-sm">📷 تغيير الصورة<input type="file" accept="image/*" onChange={handleAvatar} className="hidden" /></Label>
+            </div>
+            <div><Label>الاسم الكامل *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="rounded-xl mt-1" /></div>
+            <div>
+              <Label>البريد الإلكتروني 🔒</Label>
+              <Input value={currentUser.email} disabled className="rounded-xl mt-1 bg-muted text-muted-foreground" dir="ltr" />
+              <p className="text-[11px] text-muted-foreground mt-1">البريد لا يمكن تعديله لأسباب أمنية</p>
+            </div>
+            <div><Label>رقم الهاتف</Label><Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="01xxxxxxxxx" className="rounded-xl mt-1" dir="ltr" /></div>
+            <div>
+              <Label>الاهتمامات (اختر ما تحب)</Label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {categories.map(cat => (
+                  <label key={cat} className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm cursor-pointer border ${form.interests.includes(cat) ? "bg-[#0F2A5C] text-white border-[#0F2A5C]" : "bg-muted hover:bg-muted/80"}`}>
+                    <Checkbox checked={form.interests.includes(cat)} onCheckedChange={() => toggleInterest(cat)} className={form.interests.includes(cat) ? "data-[state=checked]:bg-white data-[state=checked]:text-[#0F2A5C]" : ""} /> {cat}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <Button onClick={saveProfile} className="w-full rounded-full bg-[#0F2A5C] text-white font-bold h-11"><Save className="w-4 h-4 ml-2" /> حفظ التعديلات</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent>
           <DialogHeader><DialogTitle className="text-right">الإعدادات</DialogTitle></DialogHeader>
           <div className="space-y-3 text-sm">
             <div className="bg-muted rounded-xl p-4">
               <div className="font-bold">الاهتمامات</div>
-              <div className="text-muted-foreground">سيصلك إشعار عند نزول كورس جديد في مجالاتك: {currentUser.interests.join("، ") || "لم تحدد بعد"}</div>
+              <div className="text-muted-foreground">سيصلك إشعار عند نزول كورس جديد في مجالاتك: {currentUser.interests.join("، ") || "لم تحدد بعد — عدّل بروفايلك"}</div>
             </div>
             <div className="bg-muted rounded-xl p-4">
               <div className="font-bold">الإشعارات</div>
-              <div className="text-muted-foreground">مفعلة - ستصلك تنبيهات للكورسات والفعاليات</div>
+              <div className="text-muted-foreground">مفعلة - ستصلك تنبيهات للكورسات والفعاليات والردود</div>
             </div>
+            <Button onClick={openEdit} variant="outline" className="w-full rounded-full">تعديل البروفايل</Button>
           </div>
         </DialogContent>
       </Dialog>
