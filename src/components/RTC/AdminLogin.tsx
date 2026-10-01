@@ -34,9 +34,10 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
         <div className="bg-[#FFD600]/15 border border-[#FFD600]/40 rounded-2xl p-3 text-xs leading-relaxed text-[#0F2A5C]">
           <div className="font-bold flex items-center gap-1"><Crown className="w-4 h-4"/> حسابات تجريبية للاختبار:</div>
           <div className="mt-1 space-y-1 font-mono text-[11px]" dir="ltr">
-            <div>head@rtc.com / 123456 — هيد الفرع (كل الصلاحيات)</div>
-            <div>hr@rtc.com / 123 — مسؤول HR (المتطوعون + التقييم فقط)</div>
+            <div>head@rtc.com — هيد الفرع (كل الصلاحيات)</div>
+            <div>hr@rtc.com — مسؤول HR (المتطوعون + التقييم فقط)</div>
           </div>
+          <div className="mt-2 text-[10px] text-[#0F2A5C]/70">* كلمات المرور مخفية لأسباب أمنية. تواصل مع هيد الفرع للحصول على بيانات الاعتماد.</div>
         </div>
 
         <div className="space-y-4">

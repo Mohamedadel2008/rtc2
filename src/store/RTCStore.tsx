@@ -31,7 +31,7 @@ export interface Meeting { id:string; title:string; date:string; time:string; le
 export interface Activity { id:string; title:string; date:string; time:string; location:string; description:string; image:string; registrations:{name:string; phone:string; age:string}[]; createdBy?:string }
 export interface Suggestion { id:string; user:string; phone:string; type:"شكوى"|"اقتراح"; text:string; reason:string; image?:string; date:string; reply?:string; status:"جديد"|"تم الرد"|"قيد المراجعة"; repliedBy?:string }
 export interface AppNotification { id:string; title:string; body:string; date:string; read:boolean; for:"admin"|"user" }
-export interface AdminUser { id:string; email:string; password:string; name:string; permissions:string[]; isHead?:boolean; avatar?:string }
+export interface AdminUser { id:string; email:string; passwordHash?:string; password?:string; name:string; permissions:string[]; isHead?:boolean; avatar?:string }
 export interface BlockRecord { userId:string; reason:string; until:string; active:boolean; by?:string }
 export interface AuditLog { id:string; action:string; actor:string; actorEmail:string; detail:string; date:string; target:string }
 
@@ -118,7 +118,7 @@ export const RTCProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
   const [notifications,setNotifications]=useState<AppNotification[]>(()=>JSON.parse(localStorage.getItem("rtc_notifs")||"[]"));
   const [admins,setAdmins]=useState<AdminUser[]>(()=>{
     const s=localStorage.getItem("rtc_admins");
-    return s?JSON.parse(s):[{id:"head1", email:"head@rtc.com", password:"123456", name:"هيد الفرع - أحمد رسالة", permissions:["كل الصلاحيات"], isHead:true},{id:"a2", email:"hr@rtc.com", password:"123", name:"مسؤول HR", permissions:["المتطوعون","التقييم"]}];
+    return s?JSON.parse(s):[{id:"head1", email:"head@rtc.com", passwordHash:"h_5e8a3c2f_11", name:"هيد الفرع - أحمد رسالة", permissions:["كل الصلاحيات"], isHead:true},{id:"a2", email:"hr@rtc.com", passwordHash:"h_2b7d1e4a_8", name:"مسؤول HR", permissions:["المتطوعون","التقييم"]}];
   });
   const [blocks,setBlocks]=useState<BlockRecord[]>(()=>JSON.parse(localStorage.getItem("rtc_blocks")||"[]"));
   const [volunteerQuestions,setVolunteerQuestions]=useState<string[]>(()=>{
@@ -214,10 +214,10 @@ export const RTCProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
     pushAudit("تصدير Excel",type,name);
   };
   const loginAdmin=(email:string,password:string)=>{
-    const found = admins.find(a=> a.email===email && a.password===password);
-    if(found){ setAdminSession(found); return found; }
-    return null;
-  };
+      const found = admins.find(a=> a.email===email && a.passwordHash && verifyPassword(password, a.passwordHash));
+      if(found){ setAdminSession(found); return found; }
+      return null;
+    };
   const logoutAdmin=()=> setAdminSession(null);
   const hasPermission=(perm:string)=>{
     if(!adminSession) return false;
