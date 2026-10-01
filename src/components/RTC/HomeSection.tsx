@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, GraduationCap, Heart, Users, Award, Sparkles, Download, Globe } from "lucide-react";
+import { ArrowLeft, GraduationCap, Heart, Users, Award, Sparkles, Download } from "lucide-react";
 
 export default function HomeSection({ setActive }: { setActive: (s: string) => void }) {
   return (
@@ -71,19 +71,6 @@ export default function HomeSection({ setActive }: { setActive: (s: string) => v
             </ul>
           </div>
           <a href="#" onClick={(e)=>{e.preventDefault(); alert("سيتم رفع الـ APK عند النشر — حالياً جرّب نسخة الويب 🟡");}} className="mt-5 inline-flex items-center justify-center gap-2 bg-[#FFD600] text-[#0F2A5C] rounded-full py-3 font-extrabold hover:bg-[#FFD600]/90">تحميل APK للأندرويد <Download className="w-5 h-5" /></a>
-        </div>
-        <div className="bg-white rounded-[1.7rem] border p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-2 font-extrabold text-[#0F2A5C] text-lg"><Globe className="w-6 h-6" /> موقع الويب</div>
-            <p className="text-muted-foreground text-sm mt-2 leading-relaxed">الموقع مستضاف على Firebase Hosting (مجاني) — رابط واحد لكل الفروع. شغال على الموبايل والكمبيوتر بنفس المشروع Flutter.</p>
-            <div className="bg-muted rounded-xl p-3 mt-3 text-xs leading-relaxed">
-              <div className="font-bold text-[#0F2A5C]">حدود الخطة المجانية:</div>
-              <div>Firestore: 1GB / 50K قراءة / 20K كتابة يومياً</div>
-              <div>R2 للصور: 10GB مجاناً — حد 2MB للصورة</div>
-              <div className="text-amber-600 font-bold">عند اقتراب الحدود — نوقف رفع الصور مؤقتاً قبل أي تكلفة</div>
-            </div>
-          </div>
-          <div className="mt-4 text-xs text-muted-foreground text-center">rtc-training.web.app • متاح 24/7</div>
         </div>
       </div>
 
