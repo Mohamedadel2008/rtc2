@@ -118,7 +118,7 @@ export const RTCProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
   const [notifications,setNotifications]=useState<AppNotification[]>(()=>JSON.parse(localStorage.getItem("rtc_notifs")||"[]"));
   const [admins,setAdmins]=useState<AdminUser[]>(()=>{
     const s=localStorage.getItem("rtc_admins");
-    return s?JSON.parse(s):[{id:"head1", email:"head@rtc.com", passwordHash:"h_5e8a3c2f_11", name:"هيد الفرع - أحمد رسالة", permissions:["كل الصلاحيات"], isHead:true},{id:"a2", email:"hr@rtc.com", passwordHash:"h_2b7d1e4a_8", name:"مسؤول HR", permissions:["المتطوعون","التقييم"]}];
+    return s?JSON.parse(s):[{id:"head1", email:"head@rtc.com", passwordHash:"h_5e8a3c2f_11", name:"هيد الفرع - أ. ايه سعيد", permissions:["كل الصلاحيات"], isHead:true},{id:"a2", email:"hr@rtc.com", passwordHash:"h_2b7d1e4a_8", name:"مسؤول HR", permissions:["المتطوعون","التقييم"]}];
   });
   const [blocks,setBlocks]=useState<BlockRecord[]>(()=>JSON.parse(localStorage.getItem("rtc_blocks")||"[]"));
   const [volunteerQuestions,setVolunteerQuestions]=useState<string[]>(()=>{
