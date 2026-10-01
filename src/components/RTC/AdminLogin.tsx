@@ -3,7 +3,7 @@ import { useRTC } from "@/store/RTCStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { ShieldCheck, Crown, Eye, EyeOff } from "lucide-react";
 
 export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
   const { loginAdmin } = useRTC();
@@ -29,6 +29,15 @@ export default function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
           </div>
           <h1 className="text-2xl font-extrabold text-[#0F2A5C]">دخول الإدارة — RTC</h1>
           <p className="text-sm text-muted-foreground">هذه الصفحة منفصلة تماماً عن حسابات المستخدمين العاديين. الدخول فقط بحساب أنشأه <strong>هيد الفرع</strong> وبالصلاحيات التي حددها.</p>
+        </div>
+
+        <div className="bg-[#FFD600]/15 border border-[#FFD600]/40 rounded-2xl p-3 text-xs leading-relaxed text-[#0F2A5C]">
+          <div className="font-bold flex items-center gap-1"><Crown className="w-4 h-4"/> حسابات تجريبية للاختبار:</div>
+          <div className="mt-1 space-y-1 font-mono text-[11px]" dir="ltr">
+            <div>head@rtc.com — هيد الفرع (كل الصلاحيات)</div>
+            <div>hr@rtc.com — مسؤول HR (المتطوعون + التقييم فقط)</div>
+          </div>
+          <div className="mt-2 text-[10px] text-[#0F2A5C]/70">* كلمات المرور مخفية لأسباب أمنية. تواصل مع هيد الفرع للحصول على بيانات الاعتماد.</div>
         </div>
 
         <div className="space-y-4">
